@@ -44,3 +44,20 @@ recae sobre el controlador.
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
+
+def cargaPeliculas (moviesfile1,moviesfile2):
+
+    cargaCasting(moviesfile1)
+    cargaDetalles(moviesfile2)
+
+def cargaCasting (moviesfile1):
+    moviesfile1=cf.data_dir+moviesfile1
+    input_file=csv.DictReader(open(moviesfile1))
+    for pelicula in input_file:
+        model.loadCSVFile(moviesfile1)
+
+def cargaDetalles (moviesfile2):
+    moviesfile2=cf.data_dir+moviesfile1
+    input_file=csv.DictReader(open(moviesfile2))
+    for pelicula in input_file:
+        model.loadCSVFile(moviesfile2)

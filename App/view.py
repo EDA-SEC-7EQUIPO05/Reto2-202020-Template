@@ -38,8 +38,8 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-
-
+moviesfile1="AllMoviesCastingRaw.csv"
+moviesfile2="AllMoviesDetailsCleaned.csv"
 
 
 # ___________________________________________________
@@ -53,3 +53,35 @@ operación seleccionada.
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+
+def printMenu():
+
+    print("\nBienvenido")
+    print("1- Cargar Datos")
+    print("2- Descubrir productoras de cine individual")
+    print("3- Conocer un director")
+    print("4- Conocer un actor")
+    print("5- Entender un genero")
+    print("6- Crear ranking")
+    print("0- Salir")
+
+
+def main():
+
+    while True:
+        printMenu() #imprimir el menu de opciones en consola
+        inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
+        if len(inputs)>0:
+
+            if int(inputs[0])==1: #opcion 1
+                print("Cargando información de los archivos...")
+                controller.cargaCasting(moviesfile1)
+                controller.cargaDetalles(moviesfile2)
+                print("Peliculas cargadas: "+str(lt.size(moviesfile1)))
+                print("Peliculas cargadas: "+str(lt.size(moviesfile2)))
+
+            elif int(inputs[0])==0: #opcion 0, salir
+                sys.exit(0)
+
+if __name__ == "__main__":
+    main()
