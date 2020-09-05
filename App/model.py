@@ -36,9 +36,17 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 
 
+def newCatalog():
+    catalogo = {'peliculas': None}
+    catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
+    return catalogo
+
+
 
 # Funciones para agregar informacion al catalogo
 
+def addMovie(catalogo, pelicula):
+    lt.addLast(catalogo['peliculas'], pelicula)
 
 
 # ==============================
@@ -51,4 +59,10 @@ es decir contiene los modelos con los datos en memoria
 # Funciones de Comparacion
 # ==============================
 
-
+def compareMovieId(id_1, id_2):
+    if id_1 > id_2:
+        return 1
+    elif id_1 == id_2:
+        return 0
+    else:
+        return -1
