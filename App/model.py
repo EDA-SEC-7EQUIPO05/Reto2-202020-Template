@@ -35,22 +35,15 @@ es decir contiene los modelos con los datos en memoria
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-def loadCSVFile (file, cmpfunction):
-    lst=lt.newList("ARRAY_LIST", cmpfunction)
-    dialect = csv.excel()
-    dialect.delimiter=";"
-    try:
-        with open(cf.data_dir + file, encoding="utf-8") as csvfile:
-            row = csv.DictReader(csvfile, dialect=dialect)
-            for elemento in row: 
-                lt.addLast(lst,elemento)
-    except:
-        print("Hubo un error con la carga del archivo")
-    return lst
+def newCatalog():
+    catalogo = {'peliculas': None}
+    catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
+    return catalogo
 
 # Funciones para agregar informacion al catalogo
 
-
+def addMovie(catalogo, pelicula):
+    lt.addLast(catalogo['peliculas'], pelicula)
 
 
 # ==============================
@@ -63,4 +56,10 @@ def loadCSVFile (file, cmpfunction):
 # Funciones de Comparacion
 # ==============================
 
-
+def compareMovieId(id_1, id_2):
+    if id_1 > id_2:
+        return 1
+    elif id_1 == id_2:
+        return 0
+    else:
+        return -1
