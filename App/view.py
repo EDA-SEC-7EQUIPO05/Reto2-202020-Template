@@ -57,8 +57,8 @@ moviesfile2="AllMoviesDetailsCleaned.csv"
 def printMenu():
 
     print("\nBienvenido")
-    print("1- Cargar Datos")
-    print("2- Descubrir productoras de cine individual")
+    print("1- Inicializar Catalogo")
+    print("2- Cargar los datos")
     print("3- Conocer un director")
     print("4- Conocer un actor")
     print("5- Entender un genero")
@@ -73,13 +73,16 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
 
-            if int(inputs[0])==1: #opcion 1
-                print("Cargando información de los archivos...")
-                controller.cargaCasting(moviesfile1)
-                controller.cargaDetalles(moviesfile2)
-                print("Peliculas cargadas: "+str(lt.size(moviesfile1)))
-                print("Peliculas cargadas: "+str(lt.size(moviesfile2)))
+            if int(inputs[0])==1:
+                print("Inicializando catalogo...")
+                cont=controller.initCatalog()
+                print("Se ha cargado el catalogo")
 
+            if int(inputs[0])==2: #opcion 1
+                print("Cargando información de los archivos...")
+                controller.loadCasting(cont,moviesfile1)
+                print("Se cargaron todas las peliculas correspondientemente")
+                
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
 

@@ -51,13 +51,9 @@ def loadMovies (catalogo,moviesfile1,moviesfile2):
     loadDetails(catalogo,moviesfile2)
 
 def loadCasting (catalogo,moviesfile1):
-     moviesfile1 = cf.data_dir + moviesfile1
-     input_file = csv.DictReader(open(moviesfile1))
-     for movie in input_file:
-        model.addMovie(catalogo,pelicula)
+    moviesfile1=cf.data_dir + moviesfile1
+    input_file = csv.DictReader(open(moviesfile1))
+    for movie in input_file:
+        model.addBook(catalog, movie)
+    
 
-def loadDetails (catalogo,moviesfile2):
-     moviesfile2 = cf.data_dir + moviesfile2
-     input_file = csv.DictReader(open(moviesfile2))
-     for movie in input_file:
-        model.addMovie(catalogo,pelicula)
