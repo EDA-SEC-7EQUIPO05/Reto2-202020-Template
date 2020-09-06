@@ -80,7 +80,7 @@ def main():
 
             if int(inputs[0])==2: #opcion 1
                 print("Cargando información de los archivos...")
-                controller.loadCasting(cont,moviesfile1)
+                controller.loadMovies(cont,moviesfile1,moviesfile2)
                 print("Se cargaron todas las peliculas correspondientemente")
                 
             elif int(inputs[0])==0: #opcion 0, salir

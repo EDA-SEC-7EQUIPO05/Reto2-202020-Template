@@ -39,17 +39,12 @@ def newCatalog():
     catalogo = {'peliculas': None,
                 "id":None}
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
-    catalogo['id'] = mp.newMap(200,
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
-                                   comparefunction=compareMovieId)
     return catalogo
 
 # Funciones para agregar informacion al catalogo
 
 def addMovie(catalogo, pelicula):
     lt.addLast(catalogo['peliculas'], pelicula)
-    mp.put(catalogo["id"],pelicula)
 
 
 # ==============================
