@@ -63,4 +63,8 @@ def loadDetails (catalogo,moviesfile2):
     for movie in input_file:
         model.addMovie(catalogo, movie)
     
+def moviesSize1 (catalogo,moviesfile1):
+    return model.moviesSize(catalogo)
 
+def moviesSize2 (catalogo,moviesfile2):
+    return model.moviesSize(catalogo)

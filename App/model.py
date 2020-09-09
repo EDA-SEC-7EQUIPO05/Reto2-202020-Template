@@ -25,6 +25,7 @@ from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 assert config
 
+
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
@@ -37,21 +38,19 @@ es decir contiene los modelos con los datos en memoria
 
 def newCatalog():
     catalogo = {'peliculas': None,
-                "id":None}
+                }
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
+
     return catalogo
 
 # Funciones para agregar informacion al catalogo
 
-def addMovie(catalogo, pelicula):
-    lt.addLast(catalogo['peliculas'], pelicula)
-
-
 # ==============================
 # Funciones de consulta
 # ==============================
-
-
+ 
+def addMovie(catalogo, pelicula):
+    lt.addLast(catalogo['peliculas'], pelicula)
 
 # ==============================
 # Funciones de Comparacion
@@ -64,3 +63,6 @@ def compareMovieId(id_1, id_2):
         return 0
     else:
         return -1
+
+def moviesSize(catalogo):
+    return lt.size(catalogo["peliculas"])
