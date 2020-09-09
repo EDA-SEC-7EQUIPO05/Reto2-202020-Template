@@ -46,16 +46,9 @@ def initCatalog ():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadMovies (catalogo,moviesfile1,moviesfile2):
+def loadMovies (catalogo,moviesfile2):
 
-    loadCasting(catalogo,moviesfile1)
     loadDetails(catalogo,moviesfile2)
-
-def loadCasting (catalogo,moviesfile1):
-    moviesfile1=cf.data_dir + moviesfile1
-    input_file = csv.DictReader(open(moviesfile1,encoding="utf-8-sig"))
-    for movie in input_file:
-        model.addMovie(catalogo, movie)
 
 def loadDetails (catalogo,moviesfile2):
     moviesfile2=cf.data_dir + moviesfile2
@@ -63,8 +56,5 @@ def loadDetails (catalogo,moviesfile2):
     for movie in input_file:
         model.addMovie(catalogo, movie)
     
-def moviesSize1 (catalogo,moviesfile1):
-    return model.moviesSize(catalogo)
-
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
