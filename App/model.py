@@ -66,3 +66,6 @@ def compareMovieId(id_1, id_2):
         return 0
     else:
         return -1
+
+def moviesSize(catalogo):
+    return lt.size(catalogo["peliculas"])
