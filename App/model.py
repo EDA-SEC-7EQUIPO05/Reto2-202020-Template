@@ -34,8 +34,6 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
-
-
 def newCatalog():
     catalogo = {'peliculas': None}
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
@@ -44,9 +42,9 @@ def newCatalog():
 
 
 # Funciones para agregar informacion al catalogo
-
 def addMovie(catalogo, pelicula):
     lt.addLast(catalogo['peliculas'], pelicula)
+
 
 
 # ==============================
