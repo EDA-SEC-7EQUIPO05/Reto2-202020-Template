@@ -19,50 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
-import config 
+import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 assert config
 
-
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
-
 """
 
 # -----------------------------------------------------
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-def newCatalog():
-    catalogo = {'peliculas': None,
-                }
-    catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
 
-    return catalogo
 
 # Funciones para agregar informacion al catalogo
+
+
 
 # ==============================
 # Funciones de consulta
 # ==============================
- 
-def addMovie(catalogo, pelicula):
-    lt.addLast(catalogo['peliculas'], pelicula)
+
+
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
-
-def compareMovieId(id_1, id_2):
-    if id_1 > id_2:
-        return 1
-    elif id_1 == id_2:
-        return 0
-    else:
-        return -1
-
-def moviesSize(catalogo):
-    return lt.size(catalogo["peliculas"])

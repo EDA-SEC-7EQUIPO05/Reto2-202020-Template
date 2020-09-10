@@ -38,8 +38,8 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-moviesfile1="Data/AllMoviesCastingRaw.csv"
-moviesfile2="Data/AllMoviesDetailsCleaned.csv"
+
+
 
 
 # ___________________________________________________
@@ -53,39 +53,3 @@ moviesfile2="Data/AllMoviesDetailsCleaned.csv"
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
-
-def printMenu():
-
-    print("\nBienvenido")
-    print("1- Inicializar Catalogo")
-    print("2- Cargar los datos")
-    print("3- Conocer un id")
-    print("4- Conocer un actor")
-    print("5- Entender un genero")
-    print("6- Crear ranking")
-    print("0- Salir")
-
-
-def main():
-
-    while True:
-        printMenu() #imprimir el menu de opciones en consola
-        inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
-        if len(inputs)>0:
-
-            if int(inputs[0])==1: #opcion 1 
-                print("Inicializando catalogo...")
-                cont=controller.initCatalog()
-                print("Se ha cargado el catalogo")
-
-            if int(inputs[0])==2: #opcion 2
-                print("Cargando información de los archivos...")
-                operacion=controller.loadDetails(cont,moviesfile2)
-                print("Se cargaron las peliculas de Detalles: " + str(controller.moviesSize2(cont,moviesfile2)))
-        
-                
-            elif int(inputs[0])==0: #opcion 0, salir
-                sys.exit(0)
-
-if __name__ == "__main__":
-    main()
