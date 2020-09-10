@@ -57,3 +57,14 @@ def addMovie(catalogo, pelicula):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def compareMovieId(id_1, id_2):
+    if id_1 > id_2:
+        return 1
+    elif id_1 == id_2:
+        return 0
+    else:
+        return -1
+
+def moviesSize(catalogo):
+    return lt.size(catalogo["peliculas"])
