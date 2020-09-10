@@ -37,10 +37,27 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 
-
-
+def initCatalog():
+    catalogo=model.newCatalog()
+    return catalogo
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
+
+def loadMovies (catalogo,moviesfile2):
+    loadDetails(catalogo,moviesfile2)
+
+def loadDetails (catalogo,moviesfile2,sep=";"):
+    dialect= csv.excel()
+    dialect.delimiter=sep
+    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
+        spamreader = csv.DictReader(csvfile,dialect=dialect)
+        for row in spamreader:
+            model.addMovie(catalogo,row)
+
+    return catalogo
+    
+def moviesSize2 (catalogo,moviesfile2):
+    return model.moviesSize(catalogo)
