@@ -38,8 +38,8 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-moviesfile1="AllMoviesCastingRaw.csv"
-moviesfile2="AllMoviesDetailsCleaned.csv"
+moviesfile1="Data/AllMoviesCastingRaw.csv"
+moviesfile2="Data/AllMoviesDetailsCleaned.csv"
 
 
 # ___________________________________________________
@@ -80,7 +80,7 @@ def main():
 
             if int(inputs[0])==2: #opcion 2
                 print("Cargando información de los archivos...")
-                controller.loadMovies(cont,moviesfile2)
+                operacion=controller.loadDetails(cont,moviesfile2)
                 print("Se cargaron las peliculas de Detalles: " + str(controller.moviesSize2(cont,moviesfile2)))
         
                 

@@ -47,14 +47,17 @@ def initCatalog():
 # ___________________________________________________
 
 def loadMovies (catalogo,moviesfile2):
-
     loadDetails(catalogo,moviesfile2)
 
-def loadDetails (catalogo,moviesfile2):
-    moviesfile2=cf.data_dir + moviesfile2
-    input_file = csv.DictReader(open(moviesfile2,encoding="utf-8-sig"))
-    for movie in input_file:
-        model.addMovie(catalogo, movie)
+def loadDetails (catalogo,moviesfile2,sep=";"):
+    dialect= csv.excel()
+    dialect.delimiter=sep
+    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
+        spamreader = csv.DictReader(csvfile,dialect=dialect)
+        for row in spamreader:
+            model.addMovie(catalogo,row)
+
+    return catalogo
     
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
