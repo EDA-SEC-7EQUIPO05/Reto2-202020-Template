@@ -42,14 +42,66 @@ operación seleccionada.
 
 
 
+small_movies_details = "Data/SmallMoviesDetailsCleaned.csv"
+samll_movies_casting = "Data/MoviesCastingRaw-small.csv"
+all_movies_details = "Data/AllMoviesDetailsCleaned.csv"
+all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
 #  respuesta.  La vista solo interactua con
 #  el controlador.
 # ___________________________________________________
 
+def print_movies_information(movies):
+    """
+    imprime la información de las películas
+    """
+    print("Se cargaron " + str(lt.size(movies)) + " películas")
+    primera=lt.firstElement(movies)
+    print("\n")
+    print(primera["original_title"])
+    print(primera["release_date"])
+    print(primera["vote_average"])
+    print(primera["vote_count"])
+    print(primera["original_language"])
+    ultima=lt.lastElement(movies)
+    print("\n")
+    print(ultima["original_title"])
+    print(ultima["release_date"])
+    print(ultima["vote_average"])
+    print(ultima["vote_count"])
+    print(ultima["original_language"])
 
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+
+def print_menu():
+    print("Bienvenido")
+    print("1. Inicializar catálogo de películas")
+    print("2. Cargar e imprimir detalles de películas")
+    print("0. Salir")
+
+"""
+Menú principal
+"""
+while True:
+    print_menu()
+    inputs = input("Seleccione una opción para continuar\n")
+
+    if int(inputs[0]) == 1:
+        print("Inicizaliando catálogo...")
+        catalogo=controller.initCatalog()
+        print("Completado")
+
+    elif int(inputs[0]) == 2:
+        print("Cargando archivos...")
+        controller.loadMovies(catalogo,small_movies_details)
+        movies=catalogo['peliculas']
+        print("Archivos cargados")
+        print_movies_information(movies)
+    
+    else:
+        sys.exit(0)
+sys.exit(0)
