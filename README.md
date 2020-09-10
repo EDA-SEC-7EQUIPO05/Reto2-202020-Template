@@ -31,6 +31,6 @@ Este directorio contiene todo el código de base que se entrega para el funciona
 Este directorio contiene las pruebas realizadas a los TADs, Estructuras de Datos y Algoritmos.
 
 Integrantes:
-Daniel Alfonso García Pilimur - da.garciap1@uniandes.edu.co - 202012183 
-Sebastián Andrés Ospino Salinas - sa.ospino@uniandes.edu.co - 201913643 
-Rodrigo Romero Prada - r.romerop@uniandes.edu.co – 201923993
+(Daniel Alfonso García Pilimur - da.garciap1@uniandes.edu.co - 202012183) 
+(Sebastián Andrés Ospino Salinas - sa.ospino@uniandes.edu.co - 201913643) 
+(Rodrigo Romero Prada - r.romerop@uniandes.edu.co – 201923993)
