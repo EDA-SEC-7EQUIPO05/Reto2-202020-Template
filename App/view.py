@@ -1,3 +1,4 @@
+  
 """
  * Copyright 2020, Departamento de sistemas y Computación
  * Universidad de Los Andes
@@ -25,6 +26,7 @@ import config
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from App import controller
+from time import process_time 
 assert config
 
 """
@@ -43,7 +45,7 @@ operación seleccionada.
 
 
 small_movies_details = "Data/SmallMoviesDetailsCleaned.csv"
-samll_movies_casting = "Data/MoviesCastingRaw-small.csv"
+small_movies_casting = "Data/MoviesCastingRaw-small.csv"
 all_movies_details = "Data/AllMoviesDetailsCleaned.csv"
 all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 # ___________________________________________________
@@ -71,6 +73,7 @@ def print_movies_information(movies):
     print(ultima["vote_average"])
     print(ultima["vote_count"])
     print(ultima["original_language"])
+    print("\n")
 
 
 def print_companies_information(company):
@@ -79,7 +82,7 @@ def print_companies_information(company):
     """
     print("Las películas producidas por esta compañía de producción son:\n")
     iterator=it.newIterator(company["movies"])
-    if it.hasNext(iterator):
+    while it.hasNext(iterator):
         movie=it.next(iterator)
         print(movie["original_title"])
     print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
@@ -109,18 +112,27 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando archivos...")
-        controller.loadMovies(catalogo,small_movies_details)
+        t_start = process_time()
+        controller.loadMovies(catalogo,all_movies_details)
+        t_stop = process_time()
         movies=catalogo['peliculas']
         print("Archivos cargados")
+        print("El tiempo de carga es de "+str(t_stop-t_start)+" segundos")
+        print(catalogo["productoras"]['type'])
         print_movies_information(movies)
+        
 
     elif int(inputs[0]) == 3:
         productora=input("Inserte una productora: ")
-        productora_value=controller.getMoviesbyCompany(catalogo,productora)
+        t_start = process_time()
+        productora_value=controller.getMoviesbyCompany(catalogo,productora.lower())
+        t_stop = process_time()
         if productora_value is not None:
             print_companies_information(productora_value)
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
         else:
             print("No se encontró la productora")
+    
     else:
         sys.exit(0)
 sys.exit(0)
