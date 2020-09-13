@@ -19,17 +19,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
-import config 
+import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 assert config
 
-
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
-
 """
 
 # -----------------------------------------------------
@@ -86,10 +84,7 @@ def getMoviesbyCompany(catalogo, company_name):
         return me.getValue(comp)
     return None
 
-
-# ==============================
-# Funciones de Comparacion
-# ==============================
+    
 
 def compareMovieId(id_1, id_2):
     if id_1 > id_2:
@@ -98,7 +93,6 @@ def compareMovieId(id_1, id_2):
         return 0
     else:
         return -1
-
 def compareProductionCompanybyName(name, company):
     entryname = me.getKey(company)
     if name == entryname:
