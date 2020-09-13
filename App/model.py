@@ -38,19 +38,54 @@ es decir contiene los modelos con los datos en memoria
 
 def newCatalog():
     catalogo = {'peliculas': None,
-                }
+                'productoras': None}  
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
-
+    catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareMovieId)
     return catalogo
 
+def newProductionCompany(nombre):
+    company = {'name': '', 'movies': None, 'average_rating': 0.0}
+    company['name'] = nombre
+    company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompanybyName)
+    return company
+
 # Funciones para agregar informacion al catalogo
+
+def addMovie(catalogo, pelicula):
+    lt.addLast(catalogo['peliculas'], pelicula)
+
+def addCompanyMovie(catalogo, companyname, movie):
+    companies = catalogo['productoras']
+    esta = mp.contains(companies, companyname)
+    if esta:
+        entry = mp.get(companies, companyname)
+        comp = me.getValue(entry)
+    else:
+        comp = newProductionCompany(companyname)
+        mp.put(companies, companyname, comp)
+    lt.addLast(comp['movies'], movie)
+    rat_comp = comp['average_rating']
+    num_mov = lt.size(comp['movies'])
+    rat_peli = movie['vote_average']
+    new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
+    comp['average_rating'] = new_ave
 
 # ==============================
 # Funciones de consulta
 # ==============================
- 
-def addMovie(catalogo, pelicula):
-    lt.addLast(catalogo['peliculas'], pelicula)
+
+def moviesSize(catalogo):
+    return lt.size(catalogo["peliculas"])
+
+def companiesSize(catalogo):
+    return mp.size(catalogo['productoras'])
+
+def getMoviesbyCompany(catalogo, company_name):
+    comp = mp.get(catalogo["productoras"], company_name)
+    if comp is not None:
+        return me.getValue(comp)
+    return None
+
 
 # ==============================
 # Funciones de Comparacion
@@ -64,5 +99,11 @@ def compareMovieId(id_1, id_2):
     else:
         return -1
 
-def moviesSize(catalogo):
-    return lt.size(catalogo["peliculas"])
+def compareProductionCompanybyName(name, company):
+    entryname = me.getKey(company)
+    if name == entryname:
+        return 0
+    elif name > entryname:
+        return 1
+    else:
+        return -1

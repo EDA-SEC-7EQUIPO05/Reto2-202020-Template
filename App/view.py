@@ -38,54 +38,85 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-moviesfile1="Data/AllMoviesCastingRaw.csv"
-moviesfile2="Data/AllMoviesDetailsCleaned.csv"
-
-
+small_movies_details = "Data/SmallMoviesDetailsCleaned.csv"
+samll_movies_casting = "Data/MoviesCastingRaw-small.csv"
+all_movies_details = "Data/AllMoviesDetailsCleaned.csv"
+all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
 #  respuesta.  La vista solo interactua con
 #  el controlador.
 # ___________________________________________________
 
+def print_movies_information(movies):
+    """
+    imprime la información de las películas
+    """
+    print("Se cargaron " + str(lt.size(movies)) + " películas")
+    primera=lt.firstElement(movies)
+    print("\n")
+    print(primera["original_title"])
+    print(primera["release_date"])
+    print(primera["vote_average"])
+    print(primera["vote_count"])
+    print(primera["original_language"])
+    ultima=lt.lastElement(movies)
+    print("\n")
+    print(ultima["original_title"])
+    print(ultima["release_date"])
+    print(ultima["vote_average"])
+    print(ultima["vote_count"])
+    print(ultima["original_language"])
 
 
+def print_companies_information(company):
+    """
+    imprime la información de una compañía de producción expecífica
+    """
+    print("Las películas producidas por esta compañía de producción son:\n")
+    iterator=it.newIterator(company["movies"])
+    if it.hasNext(iterator):
+        movie=it.next(iterator)
+        print(movie["original_title"])
+    print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
+    print("El promedio de la calificación de las películas es: "+str(company["average_rating"]))    
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
-def printMenu():
+def print_menu():
+    print("Bienvenido")
+    print("1. Inicializar catálogo de películas")
+    print("2. Cargar e imprimir detalles de películas")
+    print("3. Descubrir productoras de cine")
+    print("0. Salir")
 
-    print("\nBienvenido")
-    print("1- Inicializar Catalogo")
-    print("2- Cargar los datos")
-    print("3- Conocer un id")
-    print("4- Conocer un actor")
-    print("5- Entender un genero")
-    print("6- Crear ranking")
-    print("0- Salir")
+"""
+Menú principal
+"""
+while True:
+    print_menu()
+    inputs = input("Seleccione una opción para continuar\n")
 
+    if int(inputs[0]) == 1:
+        print("Inicizaliando catálogo...")
+        catalogo=controller.initCatalog()
+        print("Completado")
 
-def main():
+    elif int(inputs[0]) == 2:
+        print("Cargando archivos...")
+        controller.loadMovies(catalogo,small_movies_details)
+        movies=catalogo['peliculas']
+        print("Archivos cargados")
+        print_movies_information(movies)
 
-    while True:
-        printMenu() #imprimir el menu de opciones en consola
-        inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
-        if len(inputs)>0:
-
-            if int(inputs[0])==1: #opcion 1 
-                print("Inicializando catalogo...")
-                cont=controller.initCatalog()
-                print("Se ha cargado el catalogo")
-
-            if int(inputs[0])==2: #opcion 2
-                print("Cargando información de los archivos...")
-                operacion=controller.loadDetails(cont,moviesfile2)
-                print("Se cargaron las peliculas de Detalles: " + str(controller.moviesSize2(cont,moviesfile2)))
-        
-                
-            elif int(inputs[0])==0: #opcion 0, salir
-                sys.exit(0)
-
-if __name__ == "__main__":
-    main()
+    elif int(inputs[0]) == 3:
+        productora=input("Inserte una productora: ")
+        productora_value=controller.getMoviesbyCompany(catalogo,productora)
+        if productora_value is not None:
+            print_companies_information(productora_value)
+        else:
+            print("No se encontró la productora")
+    else:
+        sys.exit(0)
+sys.exit(0)
