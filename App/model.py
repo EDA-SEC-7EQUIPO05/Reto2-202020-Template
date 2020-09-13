@@ -68,7 +68,7 @@ def addCompanyMovie(catalogo, companyname, movie):
     lt.addLast(comp['movies'], movie)
     rat_comp = comp['average_rating']
     num_mov = lt.size(comp['movies'])
-    rat_peli = pelicula['vote_average']
+    rat_peli = movie['vote_average']
     new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
     comp['average_rating'] = new_ave
 
