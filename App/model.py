@@ -38,7 +38,7 @@ def newCatalog():
     catalogo = {'peliculas': None,
                 'productoras': None}  
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
-    catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareMovieId)
+    catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareProductionCompanybyName)
     return catalogo
 
 def newProductionCompany(nombre):

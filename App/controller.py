@@ -55,6 +55,7 @@ def loadDetails (catalogo,moviesfile2,sep=";"):
     with open(moviesfile2, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile,dialect=dialect)
         for row in spamreader:
+            model.addMovie(catalogo,row)
             model.addCompanyMovie(catalogo,row["production_companies"],row)
 
     return catalogo
