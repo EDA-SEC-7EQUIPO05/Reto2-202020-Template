@@ -75,7 +75,7 @@ def print_companies_information(company):
     """
     print("Las películas producidas por esta compañía de producción son:\n")
     iterator=it.newIterator(company["movies"])
-    if it.hasNext(iterator):
+    while it.hasNext(iterator):
         movie=it.next(iterator)
         print(movie["original_title"])
     print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
