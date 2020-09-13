@@ -48,19 +48,8 @@ def initCatalog():
 
 def loadMovies (catalogo,moviesfile2):
     loadDetails(catalogo,moviesfile2)
-    loadMovieCompanies(catalogo,moviesfile2)
-
+    
 def loadDetails (catalogo,moviesfile2,sep=";"):
-    dialect= csv.excel()
-    dialect.delimiter=sep
-    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
-        spamreader = csv.DictReader(csvfile,dialect=dialect)
-        for row in spamreader:
-            model.addMovie(catalogo,row)
-
-    return catalogo
-
-def loadMovieCompanies (catalogo,moviesfile2,sep=";"):
     dialect= csv.excel()
     dialect.delimiter=sep
     with open(moviesfile2, encoding="utf-8-sig") as csvfile:
@@ -69,6 +58,7 @@ def loadMovieCompanies (catalogo,moviesfile2,sep=";"):
             model.addCompanyMovie(catalogo,row["production_companies"],row)
 
     return catalogo
+
 def getMoviesbyCompany (catalogo,company_name):
     productorainfo=model.getMoviesbyCompany(catalogo,company_name)
     return productorainfo
