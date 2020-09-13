@@ -58,7 +58,7 @@ def addMovie(catalogo, pelicula):
 
 def addCompanyMovie(catalogo, companyname, movie):
     companies = catalogo['productoras']
-    esta = mp.contains(companies, company)
+    esta = mp.contains(companies, companyname)
     if esta:
         entry = mp.get(companies, companyname)
         comp = me.getValue(entry)
@@ -69,7 +69,7 @@ def addCompanyMovie(catalogo, companyname, movie):
     rat_comp = comp['average_rating']
     num_mov = lt.size(comp['movies'])
     rat_peli = pelicula['vote_average']
-    new_ave = round(((num_mov-1)*rat_comp+float(rat_mov))/(num_mov), 2)
+    new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
     comp['average_rating'] = new_ave
 
 
