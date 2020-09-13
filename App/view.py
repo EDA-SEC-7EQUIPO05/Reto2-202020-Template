@@ -73,6 +73,17 @@ def print_movies_information(movies):
     print(ultima["original_language"])
 
 
+def print_companies_information(company):
+    """
+    imprime la información de una compañía de producción expecífica
+    """
+    print("Las películas producidas por esta compañía de producción son:\n")
+    iterator=it.newIterator(company["movies"])
+    if it.hasNext(iterator):
+        movie=it.next(iterator)
+        print(movie["original_title"])
+    print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
+    print("El promedio de la calificación de las películas es: "+str(company["average_rating"]))    
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -81,6 +92,7 @@ def print_menu():
     print("Bienvenido")
     print("1. Inicializar catálogo de películas")
     print("2. Cargar e imprimir detalles de películas")
+    print("3. Descubrir productoras de cine")
     print("0. Salir")
 
 """
@@ -101,7 +113,14 @@ while True:
         movies=catalogo['peliculas']
         print("Archivos cargados")
         print_movies_information(movies)
-    
+
+    elif int(inputs[0]) == 3:
+        productora=input("Inserte una productora: ")
+        productora_value=controller.getMoviesbyCompany(catalogo,productora)
+        if productora_value is not None:
+            print_companies_information(productora_value)
+        else:
+            print("No se encontró la productora")
     else:
         sys.exit(0)
 sys.exit(0)
