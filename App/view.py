@@ -39,7 +39,7 @@ operación seleccionada.
 # ___________________________________________________
 
 small_movies_details = "Data/SmallMoviesDetailsCleaned.csv"
-samll_movies_casting = "Data/MoviesCastingRaw-small.csv"
+small_movies_casting = "Data/MoviesCastingRaw-small.csv"
 all_movies_details = "Data/AllMoviesDetailsCleaned.csv"
 all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 # ___________________________________________________
@@ -47,26 +47,6 @@ all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 #  respuesta.  La vista solo interactua con
 #  el controlador.
 # ___________________________________________________
-
-def print_movies_information(movies):
-    """
-    imprime la información de las películas
-    """
-    print("Se cargaron " + str(lt.size(movies)) + " películas")
-    primera=lt.firstElement(movies)
-    print("\n")
-    print(primera["original_title"])
-    print(primera["release_date"])
-    print(primera["vote_average"])
-    print(primera["vote_count"])
-    print(primera["original_language"])
-    ultima=lt.lastElement(movies)
-    print("\n")
-    print(ultima["original_title"])
-    print(ultima["release_date"])
-    print(ultima["vote_average"])
-    print(ultima["vote_count"])
-    print(ultima["original_language"])
 
 
 def print_companies_information(company):
@@ -79,7 +59,21 @@ def print_companies_information(company):
         movie=it.next(iterator)
         print(movie["original_title"])
     print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
-    print("El promedio de la calificación de las películas es: "+str(company["average_rating"]))    
+    print("El promedio de la calificación de las películas es: "+str(company["average_rating"]))  
+
+def print_directors_information(director):
+    
+    lista=[]
+
+    iterator=it.newIterator(director["movies"])
+    while it.hasNext(iterator):
+        movie=it.next(iterator)
+        id=movie.get("id")
+        lista.append(id)
+    print(director["movies"])
+    return lista
+
+    
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -89,6 +83,7 @@ def print_menu():
     print("1. Inicializar catálogo de películas")
     print("2. Cargar e imprimir detalles de películas")
     print("3. Descubrir productoras de cine")
+    print("4. Descubrir directores de cine")
     print("0. Salir")
 
 """
@@ -105,10 +100,11 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando archivos...")
-        controller.loadMovies(catalogo,small_movies_details)
+        controller.loadCasting(catalogo,small_movies_casting)
+        controller.loadDetails(catalogo,small_movies_details)
         movies=catalogo['peliculas']
-        print("Archivos cargados")
-        print_movies_information(movies)
+        print("Los archivos cargados fueron un total de: ",controller.moviesSize(catalogo,small_movies_casting,small_movies_details))
+        
 
     elif int(inputs[0]) == 3:
         productora=input("Inserte una productora: ")
@@ -117,6 +113,14 @@ while True:
             print_companies_information(productora_value)
         else:
             print("No se encontró la productora")
+
+    elif int(inputs[0]) == 4:
+        director=input("Inserte el nombre de un director: ")
+        director_value=controller.getDirectors(catalogo,director)
+        if director_value is not None:
+            print_directors_information(director_value)
+        else:
+            print("No se encontró el director")
     else:
         sys.exit(0)
 sys.exit(0)

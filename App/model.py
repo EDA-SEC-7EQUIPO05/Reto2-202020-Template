@@ -36,9 +36,13 @@ es decir contiene los modelos con los datos en memoria
 
 def newCatalog():
     catalogo = {'peliculas': None,
-                'productoras': None}  
+                'productoras': None,
+                'directores': None
+                }  
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
     catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareProductionCompanybyName)
+    catalogo['directores'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareDirectorbyName)
+    
     return catalogo
 
 def newProductionCompany(nombre):
@@ -46,6 +50,12 @@ def newProductionCompany(nombre):
     company['name'] = nombre
     company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompanybyName)
     return company
+
+def newDirector(nombre):
+    director = {'name': "", "books": None,  "average_rating": 0.0}
+    director['name'] = nombre
+    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorbyName)
+    return director
 
 # Funciones para agregar informacion al catalogo
 
@@ -68,6 +78,17 @@ def addCompanyMovie(catalogo, companyname, movie):
     new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
     comp['average_rating'] = new_ave
 
+def addDirector(catalogo, directorname, movie):
+    director = catalogo['directores']
+    esta = mp.contains(director, directorname)
+    if esta:
+        entry = mp.get(director, directorname)
+        dir = me.getValue(entry)
+    else:
+        dir = newDirector(directorname)
+        mp.put(director, directorname, dir)
+    lt.addLast(dir['movies'], movie)
+   
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -84,7 +105,11 @@ def getMoviesbyCompany(catalogo, company_name):
         return me.getValue(comp)
     return None
 
-    
+def getDirectors(catalogo, director_name):
+    comp = mp.get(catalogo["directores"], director_name)
+    if comp is not None:
+        return me.getValue(comp)
+    return None
 
 def compareMovieId(id_1, id_2):
     if id_1 > id_2:
@@ -93,8 +118,18 @@ def compareMovieId(id_1, id_2):
         return 0
     else:
         return -1
+
 def compareProductionCompanybyName(name, company):
     entryname = me.getKey(company)
+    if name == entryname:
+        return 0
+    elif name > entryname:
+        return 1
+    else:
+        return -1
+
+def compareDirectorbyName(name, director):
+    entryname = me.getKey(director)
     if name == entryname:
         return 0
     elif name > entryname:
