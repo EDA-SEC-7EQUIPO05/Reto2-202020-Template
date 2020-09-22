@@ -38,9 +38,11 @@ es decir contiene los modelos con los datos en memoria
 
 def newCatalog():
     catalogo = {'peliculas': None,
-                'productoras': None}  
+                'productoras': None,
+                'generos': None}  
     catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
     catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareProductionCompanybyName)
+    catalogo['generos'] = mp.newMap(numelements=50, maptype='PROBING',loadfactor=0.5, comparefunction=compareGenresbyName)
     return catalogo
 
 def newProductionCompany(nombre):
@@ -48,6 +50,12 @@ def newProductionCompany(nombre):
     company['name'] = nombre
     company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompanybyName)
     return company
+
+def newGenre(genero):
+    genre = {'genre': '', 'movies': None, 'vote_count': 0.0}
+    genre['genre'] = genero
+    genre['movies'] = lt.newList('SINGLE_LINKED', compareGenresbyName)
+    return genre
 
 
 
@@ -72,6 +80,22 @@ def addCompanyMovie(catalogo, companyname, movie):
     new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
     comp['average_rating'] = new_ave
 
+def addGenreMovie(catalogo, nombre_genero, movie):
+    genres = catalogo['generos']
+    esta = mp.contains(genres, nombre_genero)
+    if esta:
+        entry = mp.get(genres, nombre_genero)
+        genre = me.getValue(entry)
+    else:
+        genre = newGenre(nombre_genero)
+        mp.put(genres, nombre_genero, genre)
+    lt.addLast(genre['movies'], movie)
+    count_genre = genre['vote_count']
+    size_genre = lt.size(genre['movies'])
+    count_movie = movie['vote_count']
+    new_count = round(((size_genre-1)*count_genre+float(count_movie))/(size_genre), 2)
+    genre['vote_count'] = new_count
+
 
 
 # ==============================
@@ -84,10 +108,19 @@ def moviesSize(catalogo):
 def companiesSize(catalogo):
     return mp.size(catalogo['productoras'])
 
+def genresSize(catalogo):
+    return mp.size(catalogo['generos'])
+
 def getMoviesbyCompany(catalogo, company_name):
     comp = mp.get(catalogo["productoras"], company_name)
     if comp is not None:
         return me.getValue(comp)
+    return None
+
+def getMoviesbyGenre(catalogo, genre):
+    gen = mp.get(catalogo['generos'], genre)
+    if gen is not None:
+        return me.getValue(gen)
     return None
 
 # ==============================
@@ -107,6 +140,15 @@ def compareProductionCompanybyName(name, company):
     if name == entryname:
         return 0
     elif name > entryname:
+        return 1
+    else:
+        return -1
+
+def compareGenresbyName(genre_name, genre_element):
+    entry_name = me.getKey(genre_element)
+    if genre_name == entry_name:
+        return 0
+    elif genre_name > entry_name:
         return 1
     else:
         return -1
