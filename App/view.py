@@ -107,6 +107,25 @@ def print_actor_information(actor):
     numero = lista[-1][0]
     print ("\nEl director con el que éste actor ha hecho más colaboraciones es "+director+", con un total de "+str(numero))
 
+def print_movies_country(info):
+    print("Película\tDirector:")
+    iterator=it.newIterator(info)
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie['nombre']+"\t"+movie['director'])
+
+def print_genre_information(genre):
+    """
+    imprime la información de un género específico
+    """
+    print("Las películas de este género son:\n")
+    iterator = it.newIterator(genre['movies'])
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie['original_title'])
+    print("\nEl total de películas de este género es: "+str(lt.size(genre['movies'])))
+    print("El número de votos promedio para este género es: "+str(genre['vote_count']))
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -116,7 +135,10 @@ def print_menu():
     print("1. Inicializar catálogo de películas")
     print("2. Cargar detalles y castings de películas")
     print("3. Descubrir productoras de cine")
+    print("4. Descubrir director")
     print("5. Descubrir actor")
+    print("6. Descubrir un genero")
+    print("7. Encontrar películas por país")
     print("0. Salir")
 
 """
@@ -163,6 +185,30 @@ while True:
             print_actor_information(actor)
             t_stop = process_time()
             print("Este proceso tomó "+str(t_stop-t_start)+" segundos")
+
+    elif int(inputs[0]) == 6:
+        genre=input("Inserte un género (en inglés): ")
+        t_start = process_time()
+        genre_value=controller.getMoviesbyGenre(catalogo,genre.lower())
+        t_stop = process_time()
+        if genre_value is not None:
+            print_genre_information(genre_value)
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró el género")
+
+    elif int(inputs[0]) == 7:
+        country=input("Inserte un país (en inglés): ")
+        t_start = process_time()
+        country_value=controller.getMoviesbyCountry(catalogo,country.lower())
+        t_stop = process_time()
+        if country_value is not None:
+            #print_country_information(country_value)
+            print_movies_country(country_value['movies'])
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró el país")
+
     else:
         sys.exit(0)
 sys.exit(0) 

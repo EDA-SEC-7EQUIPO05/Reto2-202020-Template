@@ -63,6 +63,9 @@ def loadDetails (catalogo,movies_details,sep=";"):
         for row in spamreader:
             model.addMovie(catalogo,row)
             model.addCompanyMovie(catalogo,row["production_companies"].lower(),row)
+            generos = row["genres"].split('|')
+            for i in generos:
+                model.addGenreMovie(catalogo, i.lower(), row)
     return catalogo
 
 def loadCasting (catalogo,movies_casting,sep=";"):
@@ -74,6 +77,7 @@ def loadCasting (catalogo,movies_casting,sep=";"):
         for row in spamreader:
             for i in range(1,6):
                 model.addActor(catalogo,row["actor"+str(i)+"_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
+            model.addCountryMovie(catalogo, row['id'], row['director_name'])
     return catalogo
 
 def getMoviesbyCompany (catalogo,company_name):
@@ -84,6 +88,13 @@ def getActor_information(catalogo, actor_name):
     actor = model.getActor_information(catalogo, actor_name)
     return actor 
 
+def getMoviesbyGenre (catalogo, genre):
+    genreinfo = model.getMoviesbyGenre(catalogo, genre)
+    return genreinfo
+
+def getMoviesbyCountry (catalogo, country):
+    countryinfo = model.getMoviesbyCountry(catalogo, country)
+    return countryinfo
     
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)

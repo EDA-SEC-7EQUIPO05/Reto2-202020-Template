@@ -37,10 +37,12 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 
 def newCatalog():
-    catalogo = {'peliculas': None, 'productoras': None, "actores": None}  
+    catalogo = {'peliculas': None, 'productoras': None, "actores": None, 'generos': None, 'paises':None}  
     catalogo['peliculas'] = mp.newMap(numelements=349100,maptype='CHAINING', loadfactor=2, comparefunction=compareMovieId)
     catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareProductionCompanybyName)
     catalogo['actores'] = mp.newMap(numelements=261000,maptype='CHAINING', loadfactor=2, comparefunction=compareActorbyName)
+    catalogo['generos'] = mp.newMap(numelements=50, maptype='PROBING',loadfactor=0.5, comparefunction=compareGenresbyName)
+    catalogo['paises'] = mp.newMap(numelements=500,maptype='PROBING', loadfactor=0.5, comparefunction=compareCountriesbyName)
     return catalogo
 
 def newProductionCompany(nombre):
@@ -55,6 +57,18 @@ def newActor(nombre):
     actor["movies"] = lt.newList('SINGLE_LINKED', compareMovieId)
     actor['directores'] = mp.newMap(numelements=1000,maptype='CHAINING', loadfactor=2, comparefunction=compareDirectorByname)
     return actor
+
+def newGenre(genero):
+    genre = {'genre': '', 'movies': None, 'vote_count': 0.0}
+    genre['genre'] = genero
+    genre['movies'] = lt.newList('SINGLE_LINKED', compareGenresbyName)
+    return genre
+
+def newCountry(pais):
+    country = {'name': '', 'movies': None}
+    country['name'] = pais
+    country['movies'] = lt.newList('SINGLE_LINKED', compareCountriesbyName)
+    return country
 
 # Funciones para agregar informacion al catalogo
 
@@ -105,7 +119,37 @@ def addActor(catalogo, actor, movie, casting):
         valor = me.getValue(direct)
         valor+=1
         mp.put(act["directores"], director, valor)
-    return catalogo
+    
+
+def addGenreMovie(catalogo, nombre_genero, movie):
+    genres = catalogo['generos']
+    esta = mp.contains(genres, nombre_genero)
+    if esta:
+        entry = mp.get(genres, nombre_genero)
+        genre = me.getValue(entry)
+    else:
+        genre = newGenre(nombre_genero)
+        mp.put(genres, nombre_genero, genre)
+    lt.addLast(genre['movies'], movie)
+    count_genre = genre['vote_count']
+    size_genre = lt.size(genre['movies'])
+    count_movie = movie['vote_count']
+    new_count = round(((size_genre-1)*count_genre+float(count_movie))/(size_genre), 2)
+    genre['vote_count'] = new_count
+
+def addCountryMovie(catalogo, ids, director):
+    countries = catalogo['paises']
+    movie = me.getValue(mp.get(catalogo['peliculas'], ids))
+    nombre_pais = movie['production_countries'].lower()
+    esta = mp.contains(countries, nombre_pais)
+    if esta:
+        entry = mp.get(countries, nombre_pais)
+        country = me.getValue(entry)
+    else:
+        country = newCountry(nombre_pais)
+        mp.put(countries, nombre_pais, country)
+    info = {'nombre': movie['original_title'], 'director': director}
+    lt.addLast(country['movies'], info)
 
 
 # ==============================
@@ -118,6 +162,9 @@ def moviesSize(catalogo):
 def companiesSize(catalogo):
     return mp.size(catalogo['productoras'])
 
+def genresSize(catalogo):
+    return mp.size(catalogo['generos'])
+
 def getMoviesbyCompany(catalogo, company_name):
     comp = mp.get(catalogo["productoras"], company_name)
     if comp is not None:
@@ -128,6 +175,18 @@ def getActor_information(catalogo, actor_name):
     actor_entry = mp.get(catalogo["actores"], actor_name)
     if actor_entry is not None:
         return me.getValue(actor_entry)
+    return None
+
+def getMoviesbyGenre(catalogo, genre):
+    gen = mp.get(catalogo['generos'], genre)
+    if gen is not None:
+        return me.getValue(gen)
+    return None
+
+def getMoviesbyCountry(catalogo, country):
+    coun = mp.get(catalogo['paises'], country)
+    if coun is not None:
+        return me.getValue(coun)
     return None
 
 # ==============================
@@ -167,6 +226,24 @@ def compareActorbyName(name, actor):
     if name == entryname:
         return 0
     elif name > entryname:
+        return 1
+    else:
+        return -1
+
+def compareGenresbyName(genre_name, genre_element):
+    entry_name = me.getKey(genre_element)
+    if genre_name == entry_name:
+        return 0
+    elif genre_name > entry_name:
+        return 1
+    else:
+        return -1
+
+def compareCountriesbyName(country_name, country_element):
+    entry_name = me.getKey(country_element)
+    if country_name == entry_name:
+        return 0
+    elif country_name > entry_name:
         return 1
     else:
         return -1
