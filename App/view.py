@@ -74,6 +74,13 @@ def print_movies_information(movies):
     print(ultima["original_language"])
     print("\n")
 
+def print_movies_country(info):
+    print("Película\tDirector:")
+    iterator=it.newIterator(info)
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie['nombre']+"\t"+movie['director'])
+
 
 def print_companies_information(company):
     """
@@ -107,7 +114,9 @@ def print_menu():
     print("1. Inicializar catálogo de películas")
     print("2. Cargar e imprimir detalles de películas")
     print("3. Descubrir productoras de cine")
+    print("4. Cargar casting de películas")
     print("6. Descubrir un genero")
+    print("7. Encontrar películas por país")
     print("0. Salir")
 
 """
@@ -131,7 +140,7 @@ while True:
         print("Archivos cargados")
         print("El tiempo de carga es de "+str(t_stop-t_start)+" segundos")
         print(catalogo["productoras"]['type'])
-        print_movies_information(movies)
+        #print_movies_information(movies)
         
 
     elif int(inputs[0]) == 3:
@@ -145,6 +154,13 @@ while True:
         else:
             print("No se encontró la productora")
 
+    elif int(inputs[0]) == 4:
+        t_start = process_time()
+        controller.loadCasting(catalogo,all_movies_casting,sep=";")
+        t_stop = process_time()
+        print("Este proceso tomó "+str(t_stop-t_start)+" segundos")
+        print("El número de actores es "+str(catalogo["actores"]["size"])) 
+
     elif int(inputs[0]) == 6:
         genre=input("Inserte un género (en inglés): ")
         t_start = process_time()
@@ -155,6 +171,18 @@ while True:
             print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
         else:
             print("No se encontró el género")
+
+    elif int(inputs[0]) == 7:
+        country=input("Inserte un país (en inglés): ")
+        t_start = process_time()
+        country_value=controller.getMoviesbyCountry(catalogo,country.lower())
+        t_stop = process_time()
+        if country_value is not None:
+            #print_country_information(country_value)
+            print_movies_country(country_value['movies'])
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró el país")
     
     else:
         sys.exit(0)

@@ -66,6 +66,19 @@ def loadDetails (catalogo,moviesfile2,sep=";"):
 
     return catalogo
 
+def loadCasting(catalogo,movies_casting,sep=";"):
+    dialect= csv.excel()
+    dialect.delimiter=sep
+    with open(movies_casting, encoding="utf-8-sig") as csvfile:
+        spamreader = csv.DictReader(csvfile,dialect=dialect)
+        for row in spamreader:
+            #for i in range(1,6):
+                #model.addActor(catalogo,row["actor"+str(i)+"_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
+            model.addCountryMovie(catalogo, row['id'], row['director_name'])
+    
+    return catalogo
+
+
 def getMoviesbyCompany (catalogo,company_name):
     productorainfo=model.getMoviesbyCompany(catalogo,company_name)
     return productorainfo
@@ -73,6 +86,10 @@ def getMoviesbyCompany (catalogo,company_name):
 def getMoviesbyGenre (catalogo, genre):
     genreinfo = model.getMoviesbyGenre(catalogo, genre)
     return genreinfo
+
+def getMoviesbyCountry (catalogo, country):
+    countryinfo = model.getMoviesbyCountry(catalogo, country)
+    return countryinfo
     
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
