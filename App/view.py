@@ -1,3 +1,4 @@
+  
 """
  * Copyright 2020, Departamento de sistemas y Computación
  * Universidad de Los Andes
@@ -25,7 +26,11 @@ import config
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from App import controller
+from time import process_time 
 assert config
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
+
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -43,7 +48,7 @@ operación seleccionada.
 
 
 small_movies_details = "Data/SmallMoviesDetailsCleaned.csv"
-samll_movies_casting = "Data/MoviesCastingRaw-small.csv"
+small_movies_casting = "Data/MoviesCastingRaw-small.csv"
 all_movies_details = "Data/AllMoviesDetailsCleaned.csv"
 all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 # ___________________________________________________
@@ -52,35 +57,88 @@ all_movies_casting = "Data/AllMoviesCastingRaw.csv"
 #  el controlador.
 # ___________________________________________________
 
-def print_movies_information(movies):
+def print_movies_information(catalogo):
     """
     imprime la información de las películas
     """
-    print("Se cargaron " + str(lt.size(movies)) + " películas")
-    primera=lt.firstElement(movies)
-    print("\n")
-    print(primera["original_title"])
-    print(primera["release_date"])
-    print(primera["vote_average"])
-    print(primera["vote_count"])
-    print(primera["original_language"])
-    ultima=lt.lastElement(movies)
-    print("\n")
-    print(ultima["original_title"])
-    print(ultima["release_date"])
-    print(ultima["vote_average"])
-    print(ultima["vote_count"])
-    print(ultima["original_language"])
+    movies = catalogo["peliculas"]
+    productoras = catalogo["productoras"]
+    actores = catalogo["actores"]
+    print("Se cargaron " + str(movies["size"]) + " películas")
+    print("Se cargaron " + str(productoras["size"]) + " productoras")
+    print("El número de actores es "+str(actores["size"]))
+    
 
+
+def print_companies_information(company):
+    """
+    imprime la información de una compañía de producción expecífica
+    """
+    print("Las películas producidas por esta compañía de producción son:\n")
+    iterator=it.newIterator(company["movies"])
+    while it.hasNext(iterator):
+        movie=it.next(iterator)
+        print(movie["original_title"])
+    print("\nEl total de películas producidas es: "+str(lt.size(company["movies"])))
+    print("El promedio de la calificación de las películas es: "+str(company["average_rating"]))
+
+def print_actor_information(actor):
+    """
+    Imprime la información de un actor
+    """
+    print("Las películas en las que participó este actor son:\n")
+    iterator = it.newIterator(actor["movies"])
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie["original_title"])
+    print("\nEl total de películas en las que participó es: "+str(lt.size(actor["movies"])))
+    print("\nEl promedio de la calificación de las películas es: "+str(actor["average_rating"]))
+    keys = mp.keySet(actor["directores"])
+    valores = mp.valueSet(actor["directores"])
+    iterator_keys = it.newIterator(keys)
+    iterator_values = it.newIterator(valores)
+    lista = []
+    while it.hasNext(iterator_keys) and it.hasNext(iterator_values):
+        key = it.next(iterator_keys)
+        value = it.next(iterator_values)
+        lista.append([value,key])
+    lista.sort()
+    director = lista[-1][1]
+    numero = lista[-1][0]
+    print ("\nEl director con el que éste actor ha hecho más colaboraciones es "+director+", con un total de "+str(numero))
+
+def print_movies_country(info):
+    print("Película\tDirector:")
+    iterator=it.newIterator(info)
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie['nombre']+"\t"+movie['director'])
+
+def print_genre_information(genre):
+    """
+    imprime la información de un género específico
+    """
+    print("Las películas de este género son:\n")
+    iterator = it.newIterator(genre['movies'])
+    while it.hasNext(iterator):
+        movie = it.next(iterator)
+        print(movie['original_title'])
+    print("\nEl total de películas de este género es: "+str(lt.size(genre['movies'])))
+    print("El número de votos promedio para este género es: "+str(genre['vote_count']))
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
 def print_menu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1. Inicializar catálogo de películas")
-    print("2. Cargar e imprimir detalles de películas")
+    print("2. Cargar detalles y castings de películas")
+    print("3. Descubrir productoras de cine")
+    print("4. Descubrir director")
+    print("5. Descubrir actor")
+    print("6. Descubrir un genero")
+    print("7. Encontrar películas por país")
     print("0. Salir")
 
 """
@@ -97,11 +155,60 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando archivos...")
-        controller.loadMovies(catalogo,small_movies_details)
-        movies=catalogo['peliculas']
+        t_start = process_time()
+        controller.loadMovies (catalogo,small_movies_details,small_movies_casting)
+        t_stop = process_time()
         print("Archivos cargados")
-        print_movies_information(movies)
-    
+        print("El tiempo de carga total es de "+str(t_stop-t_start)+" segundos")
+        print("Peliculas guardadas en map de tipo "+catalogo["peliculas"]['type'])
+        print("productoras guardadas en map de tipo "+catalogo["productoras"]['type'])
+        print("Actores guardados en map de tipo "+catalogo["actores"]['type'])
+        print_movies_information(catalogo)
+        
+
+    elif int(inputs[0]) == 3:
+        productora=input("Inserte una productora: ")
+        t_start = process_time()
+        productora_value=controller.getMoviesbyCompany(catalogo,productora.lower())
+        t_stop = process_time()
+        if productora_value is not None:
+            print_companies_information(productora_value)
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró la productora")
+
+    elif int(inputs[0]) == 5:
+        actor_name = input("Ingrese el nombre de un actor: ")
+        actor = controller.getActor_information(catalogo, actor_name.lower())
+        if actor is not None:
+            t_start = process_time()
+            print_actor_information(actor)
+            t_stop = process_time()
+            print("Este proceso tomó "+str(t_stop-t_start)+" segundos")
+
+    elif int(inputs[0]) == 6:
+        genre=input("Inserte un género (en inglés): ")
+        t_start = process_time()
+        genre_value=controller.getMoviesbyGenre(catalogo,genre.lower())
+        t_stop = process_time()
+        if genre_value is not None:
+            print_genre_information(genre_value)
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró el género")
+
+    elif int(inputs[0]) == 7:
+        country=input("Inserte un país (en inglés): ")
+        t_start = process_time()
+        country_value=controller.getMoviesbyCountry(catalogo,country.lower())
+        t_stop = process_time()
+        if country_value is not None:
+            #print_country_information(country_value)
+            print_movies_country(country_value['movies'])
+            print("El tiempo de consulta es de "+str(t_stop-t_start)+" segundos\n")
+        else:
+            print("No se encontró el país")
+
     else:
         sys.exit(0)
-sys.exit(0)
+sys.exit(0) 

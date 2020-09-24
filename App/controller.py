@@ -1,4 +1,5 @@
-  """
+  
+"""
  * Copyright 2020, Departamento de sistemas y Computación
  * Universidad de Los Andes
  *
@@ -23,6 +24,8 @@
 import config as cf
 from App import model
 import csv
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 
 
 """
@@ -37,27 +40,61 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 
+
 def initCatalog():
     catalogo=model.newCatalog()
     return catalogo
+
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadMovies (catalogo,moviesfile2):
-    loadDetails(catalogo,moviesfile2)
-
-def loadDetails (catalogo,moviesfile2,sep=";"):
+def loadMovies (catalogo,movies_details,movies_casting):
+    loadDetails(catalogo,movies_details,sep=";")
+    loadCasting (catalogo,movies_casting,sep=";")
+    
+def loadDetails (catalogo,movies_details,sep=";"):
     dialect= csv.excel()
     dialect.delimiter=sep
-    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
+    with open(movies_details, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile,dialect=dialect)
         for row in spamreader:
             model.addMovie(catalogo,row)
-
+            model.addCompanyMovie(catalogo,row["production_companies"].lower(),row)
+            generos = row["genres"].split('|')
+            for i in generos:
+                model.addGenreMovie(catalogo, i.lower(), row)
     return catalogo
+
+def loadCasting (catalogo,movies_casting,sep=";"):
+    peliculas = catalogo["peliculas"]
+    dialect= csv.excel()
+    dialect.delimiter=sep
+    with open(movies_casting, encoding="utf-8-sig") as csvfile:
+        spamreader = csv.DictReader(csvfile,dialect=dialect)
+        for row in spamreader:
+            for i in range(1,6):
+                model.addActor(catalogo,row["actor"+str(i)+"_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
+            model.addCountryMovie(catalogo, row['id'], row['director_name'])
+    return catalogo
+
+def getMoviesbyCompany (catalogo,company_name):
+    productorainfo=model.getMoviesbyCompany(catalogo,company_name)
+    return productorainfo
+
+def getActor_information(catalogo, actor_name):
+    actor = model.getActor_information(catalogo, actor_name)
+    return actor 
+
+def getMoviesbyGenre (catalogo, genre):
+    genreinfo = model.getMoviesbyGenre(catalogo, genre)
+    return genreinfo
+
+def getMoviesbyCountry (catalogo, country):
+    countryinfo = model.getMoviesbyCountry(catalogo, country)
+    return countryinfo
     
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
