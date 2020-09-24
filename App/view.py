@@ -116,7 +116,7 @@ def print_menu():
     print("1. Inicializar catálogo de películas")
     print("2. Cargar detalles y castings de películas")
     print("3. Descubrir productoras de cine")
-    print("4. Descubrir actor")
+    print("5. Descubrir actor")
     print("0. Salir")
 
 """
@@ -155,7 +155,7 @@ while True:
         else:
             print("No se encontró la productora")
 
-    elif int(inputs[0]) == 4:
+    elif int(inputs[0]) == 5:
         actor_name = input("Ingrese el nombre de un actor: ")
         actor = controller.getActor_information(catalogo, actor_name.lower())
         if actor is not None:
