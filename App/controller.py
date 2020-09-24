@@ -24,6 +24,8 @@
 import config as cf
 from App import model
 import csv
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 
 
 """
@@ -49,23 +51,39 @@ def initCatalog():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadMovies (catalogo,moviesfile2):
-    loadDetails(catalogo,moviesfile2)
+def loadMovies (catalogo,movies_details,movies_casting):
+    loadDetails(catalogo,movies_details,sep=";")
+    loadCasting (catalogo,movies_casting,sep=";")
     
-def loadDetails (catalogo,moviesfile2,sep=";"):
+def loadDetails (catalogo,movies_details,sep=";"):
     dialect= csv.excel()
     dialect.delimiter=sep
-    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
+    with open(movies_details, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile,dialect=dialect)
         for row in spamreader:
             model.addMovie(catalogo,row)
             model.addCompanyMovie(catalogo,row["production_companies"].lower(),row)
+    return catalogo
 
+def loadCasting (catalogo,movies_casting,sep=";"):
+    peliculas = catalogo["peliculas"]
+    dialect= csv.excel()
+    dialect.delimiter=sep
+    with open(movies_casting, encoding="utf-8-sig") as csvfile:
+        spamreader = csv.DictReader(csvfile,dialect=dialect)
+        for row in spamreader:
+            for i in range(1,6):
+                model.addActor(catalogo,row["actor"+str(i)+"_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
     return catalogo
 
 def getMoviesbyCompany (catalogo,company_name):
     productorainfo=model.getMoviesbyCompany(catalogo,company_name)
     return productorainfo
+
+def getActor_information(catalogo, actor_name):
+    actor = model.getActor_information(catalogo, actor_name)
+    return actor 
+
     
 def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
