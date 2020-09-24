@@ -1,3 +1,4 @@
+  
 """
  * Copyright 2020, Departamento de sistemas y Computación
  * Universidad de Los Andes
@@ -35,14 +36,11 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 
 def newCatalog():
-    catalogo = {'peliculas': None,
-                'productoras': None,
-                'directores': None
-                }  
-    catalogo['peliculas'] = lt.newList('ARRAY_LIST', compareMovieId)
+    catalogo = {'peliculas': None, 'productoras': None, "actores": None}  
+    catalogo['peliculas'] = mp.newMap(numelements=349100,maptype='CHAINING', loadfactor=2, comparefunction=compareMovieId)
     catalogo['productoras'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareProductionCompanybyName)
-    catalogo['directores'] = mp.newMap(numelements=36000,maptype='CHAINING', loadfactor=2, comparefunction=compareDirectorbyName)
-    
+    catalogo['actores'] = mp.newMap(numelements=261000,maptype='CHAINING', loadfactor=2, comparefunction=compareActorbyName)
+    catalogo['directores'] = mp.newMap(numelements=261000,maptype='CHAINING', loadfactor=2, comparefunction=compareDirectorByname)
     return catalogo
 
 def newProductionCompany(nombre):
@@ -51,16 +49,23 @@ def newProductionCompany(nombre):
     company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompanybyName)
     return company
 
+def newActor(nombre):
+    actor = {"name": "", "movies": None, 'average_rating': 0.0, 'directores': None}
+    actor["name"] = nombre
+    actor["movies"] = lt.newList('SINGLE_LINKED', compareMovieId)
+    actor['directores'] = mp.newMap(numelements=1000,maptype='CHAINING', loadfactor=2, comparefunction=compareDirectorByname)
+    return actor
+
 def newDirector(nombre):
-    director = {'name': "", "books": None,  "average_rating": 0.0}
+    director = {'name': "", "movies": None,  "average_rating": 0.0}
     director['name'] = nombre
-    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorbyName)
+    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorByname)
     return director
 
 # Funciones para agregar informacion al catalogo
 
 def addMovie(catalogo, pelicula):
-    lt.addLast(catalogo['peliculas'], pelicula)
+    mp.put(catalogo["peliculas"], pelicula["id"], pelicula)
 
 def addCompanyMovie(catalogo, companyname, movie):
     companies = catalogo['productoras']
@@ -78,17 +83,52 @@ def addCompanyMovie(catalogo, companyname, movie):
     new_ave = round(((num_mov-1)*rat_comp+float(rat_peli))/(num_mov), 2)
     comp['average_rating'] = new_ave
 
+def addActor(catalogo, actor, movie, casting):
+    actores = catalogo["actores"]
+    esta = mp.contains(actores, actor)
+    if esta:
+        entry = mp.get(actores, actor)
+        act = me.getValue(entry)
+    else:
+        act = newActor(actor)
+        mp.put(actores, actor, act)
+    lt.addLast(act["movies"],movie)
+    prom_act = act['average_rating']
+    num_mov = lt.size(act['movies'])
+    rat_peli = movie['vote_average']
+    new_prom = round(((num_mov-1)*prom_act+float(rat_peli))/(num_mov), 2)
+    act['average_rating'] = new_prom
+    director = casting["director_name"]
+    if mp.contains(act['directores'], director):
+        direct = mp.get(act["directores"], director)
+        valor = me.getValue(direct)
+        valor+=1
+        mp.put(act["directores"], director, valor)
+    else:
+        valor = 0
+        mp.put(act["directores"], director, valor)
+        direct = mp.get(act["directores"], director)
+        valor = me.getValue(direct)
+        valor+=1
+        mp.put(act["directores"], director, valor)
+    return catalogo
+
 def addDirector(catalogo, directorname, movie):
     director = catalogo['directores']
     esta = mp.contains(director, directorname)
     if esta:
         entry = mp.get(director, directorname)
-        dir = me.getValue(entry)
+        director = me.getValue(entry)
     else:
-        dir = newDirector(directorname)
+        director = newDirector(directorname)
         mp.put(director, directorname, dir)
-    lt.addLast(dir['movies'], movie)
-   
+    lt.addLast(director['movies'], movie)
+    rat_dir = director['average_rating']
+    num_mov = lt.size(director['movies'])
+    rat_peli = movie['vote_average']
+    new_ave = round(((num_mov-1)*rat_dir+float(rat_peli))/(num_mov), 2)
+    director['average_rating'] = new_ave
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -105,20 +145,33 @@ def getMoviesbyCompany(catalogo, company_name):
         return me.getValue(comp)
     return None
 
+def getActor_information(catalogo, actor_name):
+    actor_entry = mp.get(catalogo["actores"], actor_name)
+    if actor_entry is not None:
+        return me.getValue(actor_entry)
+    return None
+
 def getDirectors(catalogo, director_name):
     comp = mp.get(catalogo["directores"], director_name)
     if comp is not None:
         return me.getValue(comp)
     return None
 
+
+# ==============================
+# Funciones de Comparacion
+# ==============================    
+
+    
+
 def compareMovieId(id_1, id_2):
-    if id_1 > id_2:
-        return 1
-    elif id_1 == id_2:
+    entryname = me.getKey(id_2)
+    if id_1 == entryname:
         return 0
+    elif id_1 > entryname:
+        return 1
     else:
         return -1
-
 def compareProductionCompanybyName(name, company):
     entryname = me.getKey(company)
     if name == entryname:
@@ -128,8 +181,17 @@ def compareProductionCompanybyName(name, company):
     else:
         return -1
 
-def compareDirectorbyName(name, director):
+def compareDirectorByname(name, director):
     entryname = me.getKey(director)
+    if name == entryname:
+        return 0
+    elif name > entryname:
+        return 1
+    else:
+        return -1
+
+def compareActorbyName(name, actor):
+    entryname = me.getKey(actor)
     if name == entryname:
         return 0
     elif name > entryname:

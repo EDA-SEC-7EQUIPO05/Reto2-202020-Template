@@ -23,6 +23,8 @@
 import config as cf
 from App import model
 import csv
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 
 
 """
@@ -37,48 +39,54 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 
+
 def initCatalog():
     catalogo=model.newCatalog()
     return catalogo
+
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData (catalogo,moviesfile1,moviesfile2):
-    loadCasting(catalogo,moviesfile1)
-    loadDetails(catalogo,moviesfile2)
-
-def loadCasting (catalogo,moviesfile1,sep=";"):
+def loadMovies (catalogo,movies_details,movies_casting):
+    loadDetails(catalogo,movies_details,sep=";")
+    loadCasting (catalogo,movies_casting,sep=";")
+    
+def loadDetails (catalogo,movies_details,sep=";"):
     dialect= csv.excel()
     dialect.delimiter=sep
-    with open(moviesfile1, encoding="utf-8-sig") as csvfile:
+    with open(movies_details, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile,dialect=dialect)
         for row in spamreader:
             model.addMovie(catalogo,row)
-            model.addDirector(catalogo,row["director_name"],row)
+            model.addCompanyMovie(catalogo,row["production_companies"].lower(),row)
+    return catalogo
 
-    return catalogo    
-
-def loadDetails (catalogo,moviesfile2,sep=";"):
+def loadCasting (catalogo,movies_casting,sep=";"):
+    peliculas = catalogo["peliculas"]
     dialect= csv.excel()
     dialect.delimiter=sep
-    with open(moviesfile2, encoding="utf-8-sig") as csvfile:
+    with open(movies_casting, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile,dialect=dialect)
         for row in spamreader:
-            model.addMovie(catalogo,row)
-            model.addCompanyMovie(catalogo,row["production_companies"],row)
-
+            for i in range(1,6):
+                model.addActor(catalogo,row["actor"+str(i)+"_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
+                model.addActor(catalogo,row["director_name"].lower(), me.getValue(mp.get(peliculas,row["id"])),row)
     return catalogo
 
 def getMoviesbyCompany (catalogo,company_name):
     productorainfo=model.getMoviesbyCompany(catalogo,company_name)
     return productorainfo
 
+def getActor_information(catalogo, actor_name):
+    actor = model.getActor_information(catalogo, actor_name)
+    return actor 
+
 def getDirectors (catalogo,director_name):
     directorinfo=model.getDirectors(catalogo,director_name)
     return directorinfo
-
-def moviesSize (catalogo,moviesfile1,moviesfile2):
+    
+def moviesSize2 (catalogo,moviesfile2):
     return model.moviesSize(catalogo)
